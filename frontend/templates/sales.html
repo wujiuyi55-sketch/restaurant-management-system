@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>销售统计 - 饭店后台管理系统</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="header">
+        <h1>📈 销售统计</h1>
+        <div class="user-info">
+            <span class="user-name" id="userName"></span>
+            <button class="logout-btn" onclick="logout()">退出登录</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="sidebar" id="sidebar">
+            <nav>
+                <a href="/dashboard">📊 数据概览</a>
+                <a href="/dishes">🍳 菜品管理</a>
+                <a href="/customers" id="customerLink" style="display: none;">👥 会员消费统计</a>
+                <a href="/orders">📋 订单管理</a>
+                <a href="/sales" class="active">📈 销售统计</a>
+                <a href="/employees">👨‍🍳 员工管理</a>
+                <a href="/inventory">📦 库存管理</a>
+                <a href="/vegetables">🥬 蔬菜采购</a>
+                <a href="/meats">🥩 肉类采购</a>
+                <a href="/fruits">🍎 水果采购</a>
+                <a href="/analysis">🤖 智能分析</a>
+                <a href="/chat">💬 AI对话</a>
+                <a href="/chat-records">📝 对话记录</a>
+                <a href="/users" id="userLink" style="display: none;">👤 用户管理</a>
+                <a href="/account">🔐 账号管理</a>
+            </nav>
+        </div>
+        
+        <div class="main-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>月度销售数据</h2>
+                </div>
+                <div class="card-body">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>月份</th>
+                                <th>销售额</th>
+                                <th>订单数</th>
+                                <th>客单价</th>
+                            </tr>
+                        </thead>
+                        <tbody id="monthlySalesBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2>热销菜品TOP10</h2>
+                </div>
+                <div class="card-body">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>排名</th>
+                                <th>菜品</th>
+                                <th>销量</th>
+                                <th>销售额</th>
+                            </tr>
+                        </thead>
+                        <tbody id="topDishesBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>📊 销售趋势大屏</h2>
+                </div>
+                <div class="card-body">
+                    <div class="charts-grid">
+                        <div class="chart-container">
+                            <h3>月度销售额趋势</h3>
+                            <canvas id="salesTrendChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3>热销菜品分布</h3>
+                            <canvas id="topDishesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>📈 销售数据分析大屏</h2>
+                </div>
+                <div class="card-body">
+                    <div class="charts-grid">
+                        <div class="chart-container">
+                            <h3>分类销售占比</h3>
+                            <canvas id="categoryPieChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3>月度订单趋势</h3>
+                            <canvas id="orderTrendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/sales.js"></script>
+</body>
+</html>

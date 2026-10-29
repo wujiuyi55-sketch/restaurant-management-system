@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能分析 - 饭店后台管理系统</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="header">
+        <h1>🤖 智能分析</h1>
+        <div class="user-info">
+            <span class="user-name" id="userName"></span>
+            <button class="logout-btn" onclick="logout()">退出登录</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="sidebar" id="sidebar">
+            <nav>
+                <a href="/dashboard">📊 数据概览</a>
+                <a href="/dishes">🍳 菜品管理</a>
+                <a href="/customers" id="customerLink" style="display: none;">👥 会员消费统计</a>
+                <a href="/orders">📋 订单管理</a>
+                <a href="/sales">📈 销售统计</a>
+                <a href="/employees">👨‍🍳 员工管理</a>
+                <a href="/inventory">📦 库存管理</a>
+                <a href="/vegetables">🥬 蔬菜采购</a>
+                <a href="/meats">🥩 肉类采购</a>
+                <a href="/fruits">🍎 水果采购</a>
+                <a href="/analysis" class="active">🤖 智能分析</a>
+                <a href="/chat">💬 AI对话</a>
+                <a href="/chat-records">📝 对话记录</a>
+                <a href="/users" id="userLink" style="display: none;">👤 用户管理</a>
+                <a href="/account">🔐 账号管理</a>
+            </nav>
+        </div>
+        
+        <div class="main-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>AI智能分析</h2>
+                </div>
+                <div class="card-body">
+                    <button onclick="runAnalysis()" class="add-btn">执行智能分析</button>
+                    <div id="analysisResult" class="analysis-result" style="margin-top: 20px; display: none;">
+                        <h3>AI分析报告</h3>
+                        <div id="analysisContent" class="analysis-content" style="white-space: pre-wrap; line-height: 1.8;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/analysis.js"></script>
+</body>
+</html>

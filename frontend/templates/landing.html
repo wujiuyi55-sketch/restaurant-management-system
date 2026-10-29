@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>美味餐厅 - 欢迎</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="landing-page">
+    <div class="landing-container">
+        <div class="landing-header">
+            <div class="logo">🍽️</div>
+            <h1>美味餐厅</h1>
+            <p class="subtitle">Delicious Restaurant</p>
+        </div>
+
+        <div class="landing-content">
+            <div class="hero-section">
+                <div class="hero-text">
+                    <h2>用心烹饪 · 美味传承</h2>
+                    <p>每一道菜品都承载着我们对美食的热爱与执着</p>
+                </div>
+                <div class="hero-icons">
+                    <span class="hero-icon">🍲</span>
+                    <span class="hero-icon">🥗</span>
+                    <span class="hero-icon">🍜</span>
+                    <span class="hero-icon">🍰</span>
+                </div>
+            </div>
+
+            <div class="entry-cards">
+                <div class="entry-card customer-card" onclick="enterCustomer()">
+                    <div class="card-icon">👨‍🍳</div>
+                    <h3>顾客点餐</h3>
+                    <p>浏览菜单，在线点餐，轻松支付</p>
+                    <button class="enter-btn">进入点餐</button>
+                </div>
+
+                <div class="entry-card admin-card" onclick="enterAdmin()">
+                    <div class="card-icon">📊</div>
+                    <h3>后台管理</h3>
+                    <p>管理菜品、订单、销售数据等</p>
+                    <button class="enter-btn">进入管理</button>
+                </div>
+            </div>
+
+            <div class="features-section">
+                <div class="feature-item">
+                    <span class="feature-icon">⚡</span>
+                    <div>
+                        <h4>快速点餐</h4>
+                        <p>扫码即可点餐，无需等待</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">💳</span>
+                    <div>
+                        <h4>在线支付</h4>
+                        <p>多种支付方式，安全便捷</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">📱</span>
+                    <div>
+                        <h4>手机适配</h4>
+                        <p>完美适配各种移动设备</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="landing-footer">
+            <p>© 2024 美味餐厅 · 用心做好每一道菜</p>
+        </div>
+    </div>
+
+    <script>
+        function enterCustomer() {
+            window.location.href = '/shop';
+        }
+
+        function enterAdmin() {
+            window.location.href = '/dashboard';
+        }
+    </script>
+</body>
+</html>

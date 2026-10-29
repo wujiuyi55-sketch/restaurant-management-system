@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>订单管理 - 饭店后台管理系统</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="header">
+        <h1>📋 订单管理</h1>
+        <div class="user-info">
+            <span class="user-name" id="userName"></span>
+            <button class="logout-btn" onclick="logout()">退出登录</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="sidebar" id="sidebar">
+            <nav>
+                <a href="/dashboard">📊 数据概览</a>
+                <a href="/dishes">🍳 菜品管理</a>
+                <a href="/customers" id="customerLink" style="display: none;">👥 会员消费统计</a>
+                <a href="/orders" class="active">📋 订单管理</a>
+                <a href="/sales">📈 销售统计</a>
+                <a href="/employees">👨‍🍳 员工管理</a>
+                <a href="/inventory">📦 库存管理</a>
+                <a href="/vegetables">🥬 蔬菜采购</a>
+                <a href="/meats">🥩 肉类采购</a>
+                <a href="/fruits">🍎 水果采购</a>
+                <a href="/analysis">🤖 智能分析</a>
+                <a href="/chat">💬 AI对话</a>
+                <a href="/chat-records">📝 对话记录</a>
+                <a href="/users" id="userLink" style="display: none;">👤 用户管理</a>
+                <a href="/account">🔐 账号管理</a>
+            </nav>
+        </div>
+        
+        <div class="main-content">
+            <div class="section">
+                <h2>订单列表</h2>
+                
+                <div class="filter-bar">
+                    <div class="filter-item">
+                        <label>订单状态</label>
+                        <select id="statusFilter" onchange="loadOrders()">
+                            <option value="all">全部</option>
+                            <option value="pending">待处理</option>
+                            <option value="paid">已支付</option>
+                            <option value="confirmed">已确认</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label>搜索订单号</label>
+                        <input type="text" id="searchOrderNo" placeholder="输入订单号" oninput="debounceSearch()">
+                    </div>
+                </div>
+
+                <div class="table-container" id="ordersTable">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>订单号</th>
+                                <th>顾客姓名</th>
+                                <th>联系电话</th>
+                                <th>桌号</th>
+                                <th>订单金额</th>
+                                <th>状态</th>
+                                <th>下单时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersBody">
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="pagination" id="pagination">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="orderDetailModal" onclick="closeOrderDetail()">
+        <div class="modal-content large-modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3>订单详情</h3>
+                <button class="close-modal-btn" onclick="closeOrderDetail()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="order-detail-info">
+                    <div class="detail-row">
+                        <span class="detail-label">订单号</span>
+                        <span class="detail-value" id="detailOrderNo"></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">顾客姓名</span>
+                        <span class="detail-value" id="detailCustomerName"></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">联系电话</span>
+                        <span class="detail-value" id="detailCustomerPhone"></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">桌号</span>
+                        <span class="detail-value" id="detailTableNumber"></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">订单金额</span>
+                        <span class="detail-value price-value" id="detailTotalPrice"></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">订单状态</span>
+                        <span class="detail-value" id="detailStatus"></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">下单时间</span>
+                        <span class="detail-value" id="detailCreatedAt"></span>
+                    </div>
+                </div>
+                
+                <div class="order-items-section">
+                    <h4>订单菜品</h4>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>菜品名称</th>
+                                <th>数量</th>
+                                <th>单价</th>
+                                <th>小计</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderItemsBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer" id="orderDetailFooter">
+                <button class="cancel-btn" onclick="closeOrderDetail()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let orders = [];
+        let currentPage = 1;
+        let pageSize = 10;
+        let searchKeyword = '';
+        let statusFilter = 'all';
+
+        async function loadOrders() {
+            statusFilter = document.getElementById('statusFilter').value;
+            currentPage = 1;
+            await fetchOrders();
+        }
+
+        function debounceSearch() {
+            clearTimeout(window.searchTimer);
+            window.searchTimer = setTimeout(() => {
+                searchKeyword = document.getElementById('searchOrderNo').value;
+                currentPage = 1;
+                fetchOrders();
+            }, 300);
+        }
+
+        async function fetchOrders() {
+            try {
+                const url = new URL('/api/orders', window.location.origin);
+                if (statusFilter !== 'all') url.searchParams.set('status', statusFilter);
+                if (searchKeyword) url.searchParams.set('search', searchKeyword);
+                url.searchParams.set('page', currentPage);
+                url.searchParams.set('page_size', pageSize);
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (Array.isArray(data)) {
+                    orders = data;
+                } else {
+                    orders = data.orders || [];
+                }
+                
+                renderOrders();
+                renderPagination(data.total || orders.length);
+            } catch (error) {
+                console.error('Failed to load orders:', error);
+            }
+        }
+
+        function renderOrders() {
+            const tbody = document.getElementById('ordersBody');
+            
+            if (orders.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="empty-row">暂无订单数据</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = orders.map(order => `
+                <tr>
+                    <td><span class="order-no-text">${order.order_no}</span></td>
+                    <td>${order.customer_name}</td>
+                    <td>${order.customer_phone}</td>
+                    <td>${order.table_number || '-'}</td>
+                    <td><span class="price-text">¥${parseFloat(order.total_price).toFixed(2)}</span></td>
+                    <td><span class="status-tag ${order.status}">${getStatusText(order.status)}</span></td>
+                    <td>${formatDateTime(order.created_at)}</td>
+                    <td>
+                        <button class="action-btn view-btn" onclick="viewOrder(${order.id})">查看</button>
+                        ${order.status === 'paid' || order.status === 'pending' ? 
+                            `<button class="action-btn confirm-btn" onclick="confirmOrder(${order.id})">确认</button>` : ''}
+                        <button class="action-btn delete-btn" onclick="deleteOrder(${order.id})">删除</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getStatusText(status) {
+            const statusMap = {
+                'pending': '待处理',
+                'paid': '已支付',
+                'confirmed': '已确认',
+                'completed': '已完成'
+            };
+            return statusMap[status] || status;
+        }
+
+        function formatDateTime(dateStr) {
+            if (!dateStr) return '';
+            return dateStr.substring(0, 19).replace('T', ' ');
+        }
+
+        function renderPagination(total) {
+            const pagination = document.getElementById('pagination');
+            const totalPages = Math.ceil(total / pageSize);
+            
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+
+            let html = `<button class="page-btn ${currentPage === 1 ? 'disabled' : ''}" onclick="goToPage(${currentPage - 1})">上一页</button>`;
+            
+            for (let i = 1; i <= totalPages; i++) {
+                html += `<button class="page-btn ${currentPage === i ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+            }
+            
+            html += `<button class="page-btn ${currentPage === totalPages ? 'disabled' : ''}" onclick="goToPage(${currentPage + 1})">下一页</button>`;
+            
+            pagination.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            if (page < 1) return;
+            const totalPages = Math.ceil(orders.length / pageSize);
+            if (page > totalPages) return;
+            currentPage = page;
+            fetchOrders();
+        }
+
+        let currentOrderId = null;
+
+        async function viewOrder(id) {
+            currentOrderId = id;
+            try {
+                const response = await fetch(`/api/orders/${id}`);
+                const order = await response.json();
+                
+                document.getElementById('detailOrderNo').textContent = order.order_no;
+                document.getElementById('detailCustomerName').textContent = order.customer_name;
+                document.getElementById('detailCustomerPhone').textContent = order.customer_phone;
+                document.getElementById('detailTableNumber').textContent = order.table_number || '-';
+                document.getElementById('detailTotalPrice').textContent = `¥${parseFloat(order.total_price).toFixed(2)}`;
+                document.getElementById('detailStatus').innerHTML = `<span class="status-tag ${order.status}">${getStatusText(order.status)}</span>`;
+                document.getElementById('detailCreatedAt').textContent = formatDateTime(order.created_at);
+                
+                const itemsBody = document.getElementById('orderItemsBody');
+                if (order.items && order.items.length > 0) {
+                    itemsBody.innerHTML = order.items.map(item => `
+                        <tr>
+                            <td>${item.dish_name}</td>
+                            <td>${item.quantity}</td>
+                            <td>¥${parseFloat(item.price).toFixed(2)}</td>
+                            <td>¥${(item.price * item.quantity).toFixed(2)}</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    itemsBody.innerHTML = '<tr><td colspan="4" class="empty-row">暂无菜品</td></tr>';
+                }
+                
+                const footer = document.getElementById('orderDetailFooter');
+                if (order.status === 'paid' || order.status === 'pending') {
+                    footer.innerHTML = `
+                        <button class="cancel-btn" onclick="closeOrderDetail()">关闭</button>
+                        <button class="pay-btn" onclick="confirmOrder(${id})">确认订单</button>
+                    `;
+                } else {
+                    footer.innerHTML = `
+                        <button class="cancel-btn" onclick="closeOrderDetail()">关闭</button>
+                    `;
+                }
+                
+                document.getElementById('orderDetailModal').classList.add('show');
+            } catch (error) {
+                console.error('Failed to view order:', error);
+            }
+        }
+
+        function closeOrderDetail() {
+            document.getElementById('orderDetailModal').classList.remove('show');
+            currentOrderId = null;
+        }
+
+        async function confirmOrder(id) {
+            if (!confirm('确认此订单？确认后订单将同步到销售统计。')) return;
+            
+            try {
+                const response = await fetch(`/api/orders/${id}/confirm`, {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert('订单确认成功！已同步到销售统计');
+                    closeOrderDetail();
+                    fetchOrders();
+                } else {
+                    alert(result.error || '确认失败');
+                }
+            } catch (error) {
+                console.error('Failed to confirm order:', error);
+                alert('确认失败，请重试');
+            }
+        }
+
+        async function deleteOrder(id) {
+            if (!confirm('确定要删除此订单吗？')) return;
+            
+            try {
+                const response = await fetch(`/api/orders/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert('订单删除成功');
+                    fetchOrders();
+                } else {
+                    alert(result.error || '删除失败');
+                }
+            } catch (error) {
+                console.error('Failed to delete order:', error);
+                alert('删除失败，请重试');
+            }
+        }
+
+        function logout() {
+            fetch('/api/logout', { method: 'POST', credentials: 'include' })
+                .then(() => {
+                    window.location.href = '/';
+                });
+        }
+
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/check-auth', { credentials: 'include' });
+                const data = await response.json();
+                
+                if (data.authenticated) {
+                    document.getElementById('userName').textContent = data.user.real_name || data.user.username;
+                    if (data.user.role === 'admin') {
+                        document.getElementById('userLink').style.display = 'block';
+                        document.getElementById('customerLink').style.display = 'block';
+                    }
+                } else {
+                    window.location.href = '/login';
+                }
+            } catch (error) {
+                window.location.href = '/login';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            fetchOrders();
+        });
+    </script>
+</body>
+</html>

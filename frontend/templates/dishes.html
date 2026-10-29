@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>菜品管理 - 饭店后台管理系统</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="header">
+        <h1>🍳 菜品管理</h1>
+        <div class="user-info">
+            <span class="user-name" id="userName"></span>
+            <button class="logout-btn" onclick="logout()">退出登录</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="sidebar" id="sidebar">
+            <nav>
+                <a href="/dashboard">📊 数据概览</a>
+                <a href="/dishes" class="active">🍳 菜品管理</a>
+                <a href="/customers" id="customerLink" style="display: none;">👥 会员消费统计</a>
+                <a href="/orders">📋 订单管理</a>
+                <a href="/sales">📈 销售统计</a>
+                <a href="/employees">👨‍🍳 员工管理</a>
+                <a href="/inventory">📦 库存管理</a>
+                <a href="/vegetables">🥬 蔬菜采购</a>
+                <a href="/meats">🥩 肉类采购</a>
+                <a href="/fruits">🍎 水果采购</a>
+                <a href="/analysis">🤖 智能分析</a>
+                <a href="/chat">💬 AI对话</a>
+                <a href="/chat-records">📝 对话记录</a>
+                <a href="/users" id="userLink" style="display: none;">👤 用户管理</a>
+                <a href="/account">🔐 账号管理</a>
+            </nav>
+        </div>
+        
+        <div class="main-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>菜品列表</h2>
+                    <button class="add-btn" onclick="openAddModal()">添加菜品</button>
+                </div>
+                <div class="card-body">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>菜品名称</th>
+                                <th>价格</th>
+                                <th>分类</th>
+                                <th>描述</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="dataModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">添加菜品</h3>
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="dataId">
+                <div class="form-group">
+                    <label>菜品名称</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label>价格</label>
+                    <input type="number" id="price" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>分类</label>
+                    <select id="category">
+                        <option value="热菜">热菜</option>
+                        <option value="凉菜">凉菜</option>
+                        <option value="素菜">素菜</option>
+                        <option value="海鲜">海鲜</option>
+                        <option value="汤品">汤品</option>
+                        <option value="主食">主食</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>描述</label>
+                    <textarea id="description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>状态</label>
+                    <select id="status">
+                        <option value="1">上架</option>
+                        <option value="0">下架</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-btn" onclick="closeModal()">取消</button>
+                <button class="confirm-btn" onclick="saveData()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="recipeModal">
+        <div class="modal-content" style="max-width: 650px;">
+            <div class="modal-header">
+                <h3 id="recipeModalTitle">食材配方</h3>
+                <span class="close-btn" onclick="closeRecipeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 13px; color: #6b7280; margin-bottom: 12px;">
+                    每份该菜品消耗以下食材；订单确认时按订单数量自动扣减库存。
+                </p>
+                <input type="hidden" id="recipeDishId">
+                <table class="data-table" id="recipeTable" style="margin-bottom: 12px;">
+                    <thead>
+                        <tr>
+                            <th>食材</th>
+                            <th style="width:120px;">每份用量</th>
+                            <th style="width:90px;">单位</th>
+                            <th style="width:90px;">当前库存</th>
+                            <th style="width:80px;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recipeTableBody"></tbody>
+                </table>
+                <button class="add-btn" onclick="addRecipeRow()" style="margin-top: 6px;">+ 添加食材</button>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-btn" onclick="closeRecipeModal()">取消</button>
+                <button class="confirm-btn" onclick="saveRecipe()">保存配方</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/dishes.js"></script>
+</body>
+</html>

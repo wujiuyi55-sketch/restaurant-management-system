@@ -1,0 +1,8 @@
+* text=auto
+*.py text
+*.md text
+*.html text
+*.css text
+*.js text
+*.sql text
+*.ps1 text eol=crlf

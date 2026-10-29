@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>水果采购管理 - 饭店后台管理系统</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="header">
+        <h1>🍎 水果采购管理</h1>
+        <div class="user-info">
+            <span class="user-name" id="userName"></span>
+            <button class="logout-btn" onclick="logout()">退出登录</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="sidebar">
+            <nav>
+                <a href="/dashboard">📊 数据概览</a>
+                <a href="/dishes">🍳 菜品管理</a>
+                <a href="/customers" id="customerLink" style="display: none;">👥 会员消费统计</a>
+                <a href="/orders">📋 订单管理</a>
+                <a href="/sales">📈 销售统计</a>
+                <a href="/employees">👨‍🍳 员工管理</a>
+                <a href="/inventory">📦 库存管理</a>
+                <a href="/vegetables">🥬 蔬菜采购</a>
+                <a href="/meats">🥩 肉类采购</a>
+                <a href="/fruits" class="active">🍎 水果采购</a>
+                <a href="/analysis">🤖 智能分析</a>
+                <a href="/chat">💬 AI对话</a>
+                <a href="/chat-records">📝 对话记录</a>
+                <a href="/users" id="userLink" style="display: none;">👤 用户管理</a>
+                <a href="/account">🔐 账号管理</a>
+            </nav>
+        </div>
+        
+        <div class="main-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>水果采购记录</h2>
+                    <button class="add-btn" onclick="openAddModal()">添加采购记录</button>
+                </div>
+                <div class="card-body">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>名称</th>
+                                <th>数量</th>
+                                <th>单位</th>
+                                <th>单价(元)</th>
+                                <th>总价(元)</th>
+                                <th>供应商</th>
+                                <th>采购日期</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="fruitsTableBody">
+                            <tr>
+                                <td colspan="9" style="text-align: center; padding: 40px; color: #999;">
+                                    正在加载采购记录...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="fruitModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="fruitModalTitle">添加采购记录</h3>
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="fruitId">
+                <div class="form-group">
+                    <label>名称</label>
+                    <input type="text" id="fruitName" required placeholder="例如：苹果、香蕉、橙子等">
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1;">
+                        <label>数量</label>
+                        <input type="number" id="fruitQuantity" step="0.01" required placeholder="数量">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>单位</label>
+                        <select id="fruitUnit" required>
+                            <option value="斤">斤</option>
+                            <option value="公斤">公斤</option>
+                            <option value="千克">千克</option>
+                            <option value="克">克</option>
+                            <option value="个">个</option>
+                            <option value="箱">箱</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1;">
+                        <label>单价(元)</label>
+                        <input type="number" id="fruitPrice" step="0.01" required placeholder="单价">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>总价(元)</label>
+                        <input type="number" id="fruitTotal" step="0.01" required placeholder="总价" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>供应商</label>
+                    <input type="text" id="fruitSupplier" required placeholder="供应商名称">
+                </div>
+                <div class="form-group">
+                    <label>采购日期</label>
+                    <input type="date" id="fruitDate" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-btn" onclick="closeModal()">取消</button>
+                <button class="confirm-btn" onclick="saveData()">保存</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/common.js"></script>
+    <script src="/static/js/fruits.js"></script>
+</body>
+</html>

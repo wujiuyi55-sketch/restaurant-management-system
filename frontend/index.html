@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>点餐系统 - 饭店前台</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="shop-page">
+    <div class="shop-header">
+        <div class="logo-section">
+            <h1>🍽️ 美味餐厅</h1>
+            <p>在线点餐系统</p>
+        </div>
+        <div class="header-actions">
+            <button class="cart-btn" onclick="toggleCart()">
+                🛒 购物车
+                <span class="cart-count" id="cartCount">0</span>
+            </button>
+            <button class="order-history-btn" onclick="showOrderHistory()">
+                📋 订单记录
+            </button>
+        </div>
+    </div>
+
+    <div class="shop-container">
+        <div class="category-sidebar">
+            <h3>菜品分类</h3>
+            <div class="category-list">
+                <button class="category-btn active" onclick="filterCategory('all')">全部菜品</button>
+                <button class="category-btn" onclick="filterCategory('热菜')">🍲 热菜</button>
+                <button class="category-btn" onclick="filterCategory('凉菜')">🥗 凉菜</button>
+                <button class="category-btn" onclick="filterCategory('汤品')">🍜 汤品</button>
+                <button class="category-btn" onclick="filterCategory('主食')">🍚 主食</button>
+                <button class="category-btn" onclick="filterCategory('饮品')">🍹 饮品</button>
+                <button class="category-btn" onclick="filterCategory('甜品')">🍰 甜品</button>
+            </div>
+        </div>
+
+        <div class="main-content-area">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="搜索菜品..." oninput="searchDishes()">
+                <button class="search-btn" onclick="searchDishes()">🔍</button>
+            </div>
+
+            <div class="dish-grid" id="dishGrid">
+            </div>
+        </div>
+
+        <div class="cart-sidebar" id="cartSidebar">
+            <div class="cart-header">
+                <h3>🛒 购物车</h3>
+                <button class="close-cart-btn" onclick="toggleCart()">✕</button>
+            </div>
+            <div class="cart-items" id="cartItems">
+                <div class="empty-cart">
+                    <p>购物车是空的</p>
+                    <p class="hint">快去选购美味菜品吧！</p>
+                </div>
+            </div>
+            <div class="cart-footer" id="cartFooter" style="display: none;">
+                <div class="cart-summary">
+                    <span>合计:</span>
+                    <span class="total-price">¥0.00</span>
+                </div>
+                <button class="checkout-btn" onclick="checkout()">去结算</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="checkoutModal" onclick="closeCheckout()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3>确认订单</h3>
+                <button class="close-modal-btn" onclick="closeCheckout()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="order-items" id="orderItems"></div>
+                <div class="order-total">
+                    <span>订单总额:</span>
+                    <span class="final-total" id="finalTotal">¥0.00</span>
+                </div>
+                <div class="customer-info">
+                    <label>姓名</label>
+                    <input type="text" id="customerName" placeholder="请输入您的姓名" required>
+                    <label>电话</label>
+                    <input type="tel" id="customerPhone" placeholder="请输入联系电话" required>
+                    <label>桌号</label>
+                    <input type="text" id="tableNumber" placeholder="请输入桌号（如：1号桌）" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-btn" onclick="closeCheckout()">取消</button>
+                <button class="pay-btn" onclick="submitOrder()">确认支付</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="successModal" onclick="closeSuccess()">
+        <div class="modal-content success-content" onclick="event.stopPropagation()">
+            <div class="success-icon">✓</div>
+            <h3>支付成功！</h3>
+            <p>您的订单已提交，服务员将尽快为您上菜</p>
+            <div class="order-info">
+                <p>订单编号: <span id="successOrderNo"></span></p>
+                <p>订单金额: <span id="successAmount"></span></p>
+            </div>
+            <button class="confirm-btn" onclick="closeSuccess()">好的</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="orderHistoryModal" onclick="closeOrderHistory()">
+        <div class="modal-content large-modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3>📋 订单记录</h3>
+                <button class="close-modal-btn" onclick="closeOrderHistory()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="order-history-list" id="orderHistoryList">
+                    <div class="empty-state">
+                        <p>暂无订单记录</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/shop.js"></script>
+</body>
+</html>
